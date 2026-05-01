@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Tic Tac Toe - Mood Themes</title>
+<style>
+    * {
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+    }
+
+    body {
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        transition: all 0.5s ease;
+    }
+
+    h1 {
+        margin-bottom: 10px;
+    }
+
+    .game {
+        display: grid;
+        grid-template-columns: repeat(3, 100px);
+        gap: 10px;
+    }
+
+    .cell {
+        width: 100px;
+        height: 100px;
+        font-size: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        border-radius: 10px;
+        transition: transform 0.2s, background 0.3s;
+    }
+
+    .cell:hover {
+        transform: scale(1.05);
+    }
+
+    .controls {
+        margin-top: 15px;
+    }
+
+    button, select {
+        padding: 8px 12px;
+        margin: 5px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    /* THEMES */
+    .theme-1 { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
+    .theme-1 .cell { background: rgba(255,255,255,0.2); }
+
+    .theme-2 { background: linear-gradient(135deg, #ff9a9e, #fad0c4); color: #333; }
+    .theme-2 .cell { background: rgba(255,255,255,0.5); }
+
+    .theme-3 { background: linear-gradient(135deg, #43cea2, #185a9d); color: white; }
+    .theme-3 .cell { background: rgba(255,255,255,0.2); }
+
+    .theme-4 { background: linear-gradient(135deg, #f7971e, #ffd200); color: #222; }
+    .theme-4 .cell { background: rgba(255,255,255,0.5); }
+
+    .theme-5 { background: linear-gradient(135deg, #ff6a00, #ee0979); color: white; }
+    .theme-5 .cell { background: rgba(255,255,255,0.2); }
+
+    .theme-6 { background: linear-gradient(135deg, #00c6ff, #0072ff); color: white; }
+    .theme-6 .cell { background: rgba(255,255,255,0.2); }
+
+    .theme-7 { background: linear-gradient(135deg, #232526, #414345); color: white; }
+    .theme-7 .cell { background: rgba(255,255,255,0.15); }
+
+    .status {
+        margin-top: 10px;
+        font-weight: bold;
+    }
+</style>
+</head>
+<body class="theme-1">
+
+<h1>Tic Tac Toe</h1>
+
+<div class="game" id="board"></div>
+
+<div class="status" id="status">Player X's Turn</div>
+
+<div class="controls">
+    <button onclick="resetGame()">Restart</button>
+
+    <select onchange="changeTheme(this.value)">
+        <option value="1">Calm Blue</option>
+        <option value="2">Soft Pink</option>
+        <option value="3">Ocean Green</option>
+        <option value="4">Sunny Yellow</option>
+        <option value="5">Energetic Red</option>
+        <option value="6">Cool Sky</option>
+        <option value="7">Dark Mode</option>
+    </select>
+</div>
+
+<script>
+    const board = document.getElementById("board");
+    const statusText = document.getElementById("status");
+
+    let cells = [];
+    let currentPlayer = "X";
+    let gameActive = true;
+
+    function createBoard() {
+        board.innerHTML = "";
+        cells = [];
+
+        for (let i = 0; i < 9; i++) {
+            const cell = document.createElement("div");
+            cell.classList.add("cell");
+            cell.addEventListener("click", () => handleMove(i));
+            board.appendChild(cell);
+            cells.push(cell);
+        }
+    }
+
+    function handleMove(index) {
+        if (!gameActive || cells[index].textContent !== "") return;
+
+        cells[index].textContent = currentPlayer;
+
+        if (checkWin()) {
+            statusText.textContent = `Player ${currentPlayer} Wins! 🎉`;
+            gameActive = false;
+            return;
+        }
+
+        if (cells.every(cell => cell.textContent !== "")) {
+            statusText.textContent = "It's a Draw!";
+            gameActive = false;
+            return;
+        }
+
+        currentPlayer = currentPlayer === "X" ? "O" : "X";
+        statusText.textContent = `Player ${currentPlayer}'s Turn`;
+    }
+
+    function checkWin() {
+        const wins = [
+            [0,1,2],[3,4,5],[6,7,8],
+            [0,3,6],[1,4,7],[2,5,8],
+            [0,4,8],[2,4,6]
+        ];
+
+        return wins.some(pattern => {
+            const [a,b,c] = pattern;
+            return cells[a].textContent &&
+                   cells[a].textContent === cells[b].textContent &&
+                   cells[a].textContent === cells[c].textContent;
+        });
+    }
+
+    function resetGame() {
+        currentPlayer = "X";
+        gameActive = true;
+        statusText.textContent = "Player X's Turn";
+        createBoard();
+    }
+
+    function changeTheme(themeNumber) {
+        document.body.className = "theme-" + themeNumber;
+    }
+
+    // Initialize
+    createBoard();
+</script>
+
+</body>
+</html>
